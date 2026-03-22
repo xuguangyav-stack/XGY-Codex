@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>个人资产管理工具</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Personal Finance Dashboard</p>
+          <h1>个人资产管理工具</h1>
+          <p class="hero-copy">
+            记录你的现金、投资、负债与收支，快速了解净资产变化，并把重要目标拆成可执行的计划。
+          </p>
+        </div>
+        <div class="hero-actions">
+          <button id="seed-demo" class="secondary">载入演示数据</button>
+          <button id="reset-data" class="danger">清空本地数据</button>
+        </div>
+      </header>
+
+      <main class="dashboard-grid">
+        <section class="panel summary-panel">
+          <div class="panel-title-row">
+            <div>
+              <p class="section-label">总览</p>
+              <h2>资产概览</h2>
+            </div>
+            <span class="badge">自动保存在浏览器</span>
+          </div>
+          <div class="summary-cards">
+            <article class="summary-card positive">
+              <span>总资产</span>
+              <strong id="total-assets">¥0</strong>
+            </article>
+            <article class="summary-card negative">
+              <span>总负债</span>
+              <strong id="total-liabilities">¥0</strong>
+            </article>
+            <article class="summary-card accent">
+              <span>净资产</span>
+              <strong id="net-worth">¥0</strong>
+            </article>
+            <article class="summary-card neutral">
+              <span>本月结余</span>
+              <strong id="monthly-balance">¥0</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title-row">
+            <div>
+              <p class="section-label">录入</p>
+              <h2>资产 / 负债账户</h2>
+            </div>
+          </div>
+          <form id="account-form" class="form-grid">
+            <label>
+              账户名称
+              <input name="name" type="text" placeholder="如：招商银行活期" required />
+            </label>
+            <label>
+              类型
+              <select name="type" required>
+                <option value="asset">资产</option>
+                <option value="liability">负债</option>
+              </select>
+            </label>
+            <label>
+              分类
+              <select name="category" required>
+                <option value="现金">现金</option>
+                <option value="储蓄">储蓄</option>
+                <option value="基金">基金</option>
+                <option value="股票">股票</option>
+                <option value="房产">房产</option>
+                <option value="信用卡">信用卡</option>
+                <option value="贷款">贷款</option>
+                <option value="其他">其他</option>
+              </select>
+            </label>
+            <label>
+              当前金额
+              <input name="amount" type="number" step="0.01" min="0" placeholder="10000" required />
+            </label>
+            <button type="submit">新增账户</button>
+          </form>
+          <div id="account-list" class="list-stack empty-state"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title-row">
+            <div>
+              <p class="section-label">流水</p>
+              <h2>收入 / 支出记录</h2>
+            </div>
+          </div>
+          <form id="transaction-form" class="form-grid">
+            <label>
+              事项说明
+              <input name="note" type="text" placeholder="如：工资、房租、基金定投" required />
+            </label>
+            <label>
+              类型
+              <select name="type" required>
+                <option value="income">收入</option>
+                <option value="expense">支出</option>
+              </select>
+            </label>
+            <label>
+              分类
+              <input name="category" type="text" placeholder="如：工资 / 餐饮 / 投资" required />
+            </label>
+            <label>
+              金额
+              <input name="amount" type="number" step="0.01" min="0" placeholder="5000" required />
+            </label>
+            <label>
+              日期
+              <input name="date" type="date" required />
+            </label>
+            <button type="submit">新增流水</button>
+          </form>
+          <div id="transaction-list" class="list-stack empty-state"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title-row">
+            <div>
+              <p class="section-label">目标</p>
+              <h2>财务目标追踪</h2>
+            </div>
+          </div>
+          <form id="goal-form" class="form-grid">
+            <label>
+              目标名称
+              <input name="name" type="text" placeholder="如：应急金 / 旅行基金" required />
+            </label>
+            <label>
+              目标金额
+              <input name="target" type="number" step="0.01" min="0" placeholder="50000" required />
+            </label>
+            <label>
+              当前进度
+              <input name="saved" type="number" step="0.01" min="0" placeholder="8000" required />
+            </label>
+            <label>
+              截止日期
+              <input name="deadline" type="date" required />
+            </label>
+            <button type="submit">新增目标</button>
+          </form>
+          <div id="goal-list" class="goal-list empty-state"></div>
+        </section>
+
+        <section class="panel insights-panel">
+          <div class="panel-title-row">
+            <div>
+              <p class="section-label">洞察</p>
+              <h2>配置与建议</h2>
+            </div>
+          </div>
+          <div id="allocation-chart" class="allocation-chart empty-state"></div>
+          <div id="insights" class="insights"></div>
+        </section>
+      </main>
+    </div>
+
+    <template id="account-item-template">
+      <article class="list-item">
+        <div>
+          <h3></h3>
+          <p class="meta"></p>
+        </div>
+        <div class="list-item-right">
+          <strong></strong>
+          <button class="ghost danger small">删除</button>
+        </div>
+      </article>
+    </template>
+
+    <template id="transaction-item-template">
+      <article class="list-item transaction-item">
+        <div>
+          <h3></h3>
+          <p class="meta"></p>
+        </div>
+        <div class="list-item-right">
+          <strong></strong>
+          <button class="ghost danger small">删除</button>
+        </div>
+      </article>
+    </template>
+
+    <template id="goal-item-template">
+      <article class="goal-card">
+        <div class="goal-head">
+          <div>
+            <h3></h3>
+            <p class="meta"></p>
+          </div>
+          <button class="ghost danger small">删除</button>
+        </div>
+        <div class="progress-bar"><span></span></div>
+        <div class="goal-foot">
+          <strong></strong>
+          <span class="goal-percent"></span>
+        </div>
+      </article>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
